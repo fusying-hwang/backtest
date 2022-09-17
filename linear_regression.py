@@ -13,7 +13,7 @@ from sklearn import preprocessing, svm
 from sklearn.linear_model import LinearRegression
 
 ts.set_token('51fd5a77415e6299ad8243e387472a5552e3d24f5c889781caef6d89')
-df = ts.pro_bar(ts_code='600519.SH', adj='qfq', start_date='20170101', end_date='20220911')
+df = ts.pro_bar(ts_code='600519.SH', adj='qfq', start_date='20170101', end_date='20220828')
 df['trade_date'] = pd.to_datetime(df['trade_date'], format = "%Y/%m/%d %H:%M:%S")
 
 df.set_index('trade_date', inplace=True)  # 设置索引覆盖原来的数据
@@ -34,7 +34,11 @@ df = df[['close', 'hl_pct', 'pct_chg', 'vol']]
 
 forecast_col = 'close'
 df.fillna(value=-99999, inplace=True)
+
+# label 用的是forecast_out天之后的
 forecast_out = int(math.ceil(0.01 * len(df)))
+
+forecast_out = 2
 print(f'forecast_out {forecast_out}')
 
 df['label'] = df[forecast_col].shift(-forecast_out)
