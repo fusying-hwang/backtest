@@ -12,13 +12,13 @@ from sklearn.preprocessing import MinMaxScaler
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout, LSTM
 
-
+stock_code = '600775.SH'
 ts.set_token('51fd5a77415e6299ad8243e387472a5552e3d24f5c889781caef6d89')
-data = ts.pro_bar(ts_code='600519.SH', adj='qfq', start_date='20150101', end_date='20211231')
+data = ts.pro_bar(ts_code=stock_code, adj='qfq', start_date='20120101', end_date='20211231')
 data['date'] = pd.to_datetime(data['trade_date'], format = "%Y/%m/%d %H:%M:%S")
 data.set_index('date', inplace=True)  # 设置索引覆盖原来的数据
 data = data.sort_index(ascending=True)  # 将时间顺序升序，符合时间序列
-data = data[['high', 'low', 'open', 'close', 'vol']]
+#data = data[['high', 'low', 'open', 'close', 'vol']]
 print(data)
 # ['ts_code', 'open', 'high', 'low', 'close', 'pre_close', 'change', 'pct_chg', 'vol', 'amount']
 """
@@ -41,9 +41,12 @@ Date
 # prepare data
 # scale down the 
 scaler = MinMaxScaler(feature_range=(0,1))
-scaled_data = scaler.fit_transform(data['close'].values.reshape(-1, 1))
+before_scale = data['close'].values.reshape(-1, 1)
+print(before_scale)
+scaled_data = scaler.fit_transform(before_scale)
 
 prediction_days = 60
+print(scaled_data)
 
 x_train = []
 y_train = []
@@ -55,6 +58,7 @@ for x in range(prediction_days, len(scaled_data)):
 x_train, y_train = np.array(x_train), np.array(y_train)
 x_train = np.reshape(x_train, (x_train.shape[0], x_train.shape[1], 1))
 
+exit(0)
 # build the model
 model = Sequential()
 
@@ -70,11 +74,11 @@ model.compile(optimizer='adam', loss='mean_squared_error')
 model.fit(x_train, y_train, epochs=25, batch_size=32)
 
 
-test_data = ts.pro_bar(ts_code='600519.SH', adj='qfq', start_date='20220101')
+test_data = ts.pro_bar(ts_code=stock_code, adj='qfq', start_date='20220101')
 test_data['date'] = pd.to_datetime(test_data['trade_date'], format = "%Y/%m/%d %H:%M:%S")
 test_data.set_index('date', inplace=True)  # 设置索引覆盖原来的数据
 test_data = test_data.sort_index(ascending=True)  # 将时间顺序升序，符合时间序列
-test_data = test_data[['high', 'low', 'open', 'close', 'vol']]
+#test_data = test_data[['high', 'low', 'open', 'close', 'vol']]
 actual_prices = test_data['close']
 
 total_dataset = pd.concat((data['close'], test_data['close']), axis=0)
