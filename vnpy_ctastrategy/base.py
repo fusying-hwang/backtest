@@ -52,6 +52,7 @@ EVENT_CTA_STOPORDER = "eCtaStopOrder"
 INTERVAL_DELTA_MAP: Dict[Interval, timedelta] = {
     Interval.TICK: timedelta(milliseconds=1),
     Interval.MINUTE: timedelta(minutes=1),
+    Interval.HALFHOUR: timedelta(minutes=30),
     Interval.HOUR: timedelta(hours=1),
     Interval.DAILY: timedelta(days=1),
 }

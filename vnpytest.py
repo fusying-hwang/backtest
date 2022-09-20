@@ -34,10 +34,10 @@ log_engine = LogEngine(main_engine=main_engine, event_engine=event_engine)
 
 engine = BacktesterEngine(main_engine=main_engine, event_engine=event_engine)
 
-code = "600519.SSE"
-interval = "d"
-start = datetime(2021, 1, 1)
-end = datetime(2022, 9, 10)
+code = "300750.SZSE"
+interval = "30m"
+start = datetime(2021, 12, 20)
+end = datetime(2022, 9, 20)
 
 engine.run_downloading(vt_symbol=code,
                        interval=interval,
@@ -54,7 +54,7 @@ engine.set_parameters(
     slippage=0.2,
     size=300,
     pricetick=0.2,
-    capital=1_000_000,
+    capital=200000,
 )
 engine.add_strategy(AtrRsiStrategy, {})
 engine.load_data()
