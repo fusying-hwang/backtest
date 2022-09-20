@@ -592,14 +592,15 @@ class BacktestingEngine:
         self.tick = tick
         self.datetime = tick.datetime
 
-        self.cross_limit_order()
-        self.cross_stop_order()
+        self.cross_limit_order() #撮合限价单
+        self.cross_stop_order() #撮合停止单
         self.strategy.on_tick(tick)
 
         self.update_daily_close(tick.last_price)
 
     def cross_limit_order(self) -> None:
         """
+        限价单撮合成交
         Cross limit order with last bar/tick data.
         """
         if self.mode == BacktestingMode.BAR:
@@ -673,6 +674,7 @@ class BacktestingEngine:
 
     def cross_stop_order(self) -> None:
         """
+        停止单撮合
         Cross stop order with last bar/tick data.
         """
         if self.mode == BacktestingMode.BAR:

@@ -87,6 +87,7 @@ class AtrRsiStrategy(CtaTemplate):
         """
         Callback of new bar data update.
         """
+        # 目的是清空未成交的委托(包括本地停止单，限价单)，保证当前时间点委托状态是唯一的。
         self.cancel_all()
 
         am = self.am
