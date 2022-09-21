@@ -646,7 +646,6 @@ class BacktestingEngine:
 
             # Push trade update
             self.trade_count += 1
-
             if long_cross:
                 trade_price = min(order.price, long_best_price)
                 pos_change = order.volume
@@ -1001,7 +1000,7 @@ class DailyResult:
         # Holding pnl is the pnl from holding position at day start
         self.start_pos = start_pos
         self.end_pos = start_pos
-
+        print(f"size {size}")
         self.holding_pnl = self.start_pos * \
             (self.close_price - self.pre_close) * size
 
@@ -1017,6 +1016,7 @@ class DailyResult:
             self.end_pos += pos_change
 
             turnover: float = trade.volume * size * trade.price
+            print(f'self.close_price {self.close_price}')
             self.trading_pnl += pos_change * \
                 (self.close_price - trade.price) * size
             self.slippage += trade.volume * size * slippage

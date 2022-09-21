@@ -1,9 +1,10 @@
 # %%
+from vnpy.trader import setting
 from vnpy.trader.optimize import OptimizationSetting
 from vnpy_ctastrategy.backtesting import BacktestingEngine
 from vnpy_ctabacktester import BacktesterEngine
-from vnpy_ctastrategy.strategies.atr_rsi_strategy import (
-    AtrRsiStrategy,
+from vnpy_ctastrategy.strategies.lstm_strategy import (
+    LongShortTermMemoryStrategy,
 )
 from vnpy.event import EventEngine
 from vnpy.trader.engine import MainEngine, LogEngine
@@ -24,9 +25,6 @@ SETTINGS['database.user'] = 'root'
 
 SETTINGS['log.level'] = 10
 
-
-print(SETTINGS)
-
 event_engine = EventEngine()
 
 main_engine = MainEngine(event_engine)
@@ -45,18 +43,29 @@ engine.run_downloading(vt_symbol=code,
                        end=end)
 
 engine = BacktestingEngine()
+
+"""
+设置回测的参数。参数及其含义如下 1. vt_symbol ==> 产品名称 2. interval ==> 周期 3. start ==> 开始时间 4. rate ==> 手续费 5. 
+slippage ==> 滑点 6. size ==> 合约乘数 7. pricetick ==> 价格跳动 8. capital ==> 回测资本 9. end ==> 截止时间 
+10. mode ==> 回测的模式, 一共有两种:BacktestingMode.BAR和BacktestingMode.TICK 11. inverse ==> 周期
+"""
+
+settings = {
+    'vt_symbol': code,
+    'interval':interval,
+    'start':start,
+    'end':end,
+    'rate':0.3/10000,
+    'slippage':0.2,
+    'size':100,  # 设置一手股票个数
+    'pricetick':0.2,
+    'capital':200000.0, 
+}
+
 engine.set_parameters(
-    vt_symbol=code,
-    interval=interval,
-    start=start,
-    end=end,
-    rate=0.3/10000,
-    slippage=0.2,
-    size=300,
-    pricetick=0.2,
-    capital=200000,
+    **settings
 )
-engine.add_strategy(AtrRsiStrategy, {})
+engine.add_strategy(LongShortTermMemoryStrategy, settings)
 engine.load_data()
 engine.run_backtesting()
 df = engine.calculate_result()
